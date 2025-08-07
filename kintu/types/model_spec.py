@@ -2,9 +2,9 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from kintu.llmsdk import LLMSDK
-from kintu.model import Model
-from kintu.provider import Provider
+from kintu.types.llmsdk import LLMSDK
+from kintu.types.model import Model
+from kintu.types.provider import Provider
 
 
 class ModelFeatures(BaseModel):
