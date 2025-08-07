@@ -1,33 +1,74 @@
-from pydantic import BaseModel, Literal
+import enum
+from typing import Any
+
+from pydantic import BaseModel
+
+
+class AnthropicToolChoice(str, enum.Enum):
+    AUTO = "auto"  # Pick whether to use a tool
+    NONE = "none"  # No tools
+    ANY = "any"  # One or more
+    TOOL = "tool"  # For one specific tool
+
 
 # Provider configurations
 class AnthropicConfig(BaseModel):
     # Anthropic-specific features
-    disable_parallel_tool_use: bool = False
+    disable_parallel_tool_use: bool | None = None
     container_id: str | None = None
-    tool_choice: dict | None = None  # {"type": "auto|any|tool", "name": "tool_name"}
     stop_sequences: list[str] | None = None
     top_p: float | None = None
     top_k: int | None = None
 
+    tool_choice: AnthropicToolChoice | None = None
+    tool_choice_specific_name: str | None = (
+        None  # If tool_choice is TOOL, you must provide the name of the tool
+    )
+
     # Thinking configuration
-    thinking: dict | None = None  # {"type": "enabled|disabled", "budget_tokens": int}
+    thinking_enabled: bool | None = None
+    thinking_budget: int | None = None
 
     # Beta features
-    beta_headers: list[str] | None = None  # e.g., ["computer-use-2024-10-22"]
+    additional_beta_headers: list[str] | None = None  # e.g., ["computer-use-2024-10-22"]
+
+
+class OpenAIReasoningLevel(str, enum.Enum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+
+class OpenAIToolChoice(str, enum.Enum):
+    AUTO = "auto"  # Pick whether or not to use a tool
+    NONE = "none"  # No tools
+    REQUIRED = "required"  # One or more
+    SPECIFIC = "specific"  # For one specific tool
+
 
 class OpenAIConfig(BaseModel):
     # OpenAI-specific features
     max_completion_tokens: int | None = None
-    store: bool = False
+    store: bool | None = None
     metadata: dict[str, str] | None = None
     prompt_cache_key: str | None = None
-    parallel_tool_calls: bool = True
-    tool_choice: str | dict | None = None  # "auto", "none", "required", or {"type": "function", "function": {"name": "..."}}
+    parallel_tool_calls: bool | None = None
     top_p: float | None = None
 
+    tool_choice: OpenAIToolChoice | None = None
+    tool_choice_specific_name: str | None = (
+        None  # If tool_choice is SPECIFIC, you must provide the name of the tool
+    )
+
     # Reasoning configuration
-    reasoning_effort: Literal["low", "medium", "high"] | None = None
+    reasoning_effort: OpenAIReasoningLevel | None = None
+
+
+class GeminiToolChoice(str, enum.Enum):
+    AUTO = "auto"  # Pick whether or not to use a tool
+    NONE = "none"  # No tools
+    ANY = "any"  # One or more
+
 
 class GeminiConfig(BaseModel):
     top_p: float | None = None
@@ -36,29 +77,26 @@ class GeminiConfig(BaseModel):
 
     # Gemini-specific features
     response_mime_type: str | None = None
-    response_schema: dict | None = None
+    response_schema: dict[str, Any] | None = None
     seed: int | None = None
 
     # Function calling config
-    function_calling_config: RawGeminiFunctionCallingConfig | None = None  # {"mode": "AUTO|ANY|NONE", "allowed_function_names": [...]}
+    tool_choice: GeminiToolChoice | None = None
+    tool_choice_allowed_tools: list[str] | None = None  # Restrict the set of allowed tools
 
     # Thinking configuration
-    thinking_config: RawGeminiThinkingConfig | None = None  # {"include_thoughts": bool, "thinking_budget": int}
+    thinking_include_thoughts: bool | None = None
+    thinking_budget: int | None = None
+
 
 class LiteLLMConfig(BaseModel):
-    # LiteLLM-specific features
-    top_p: float | None = None
-    top_k: int | None = None
-    stop: list[str] | None = None
-    repetition_penalty: float | None = None
-    presence_penalty: float | None = None
-    frequency_penalty: float | None = None
+    # Placeholder for now
+    pass
 
-    # Provider-specific overrides (e.g., for TogetherAI)
-    custom_llm_provider: str | None = None  # e.g., "together_ai"
-    api_base: str | None = None
 
 class ProviderConfigs(BaseModel):
+    # This allows the user to specify settings. If a provider config field is set, that will
+    # override any defaults determined by the provider OR by kintu.
     anthropic: AnthropicConfig | None = None
     openai: OpenAIConfig | None = None
     gemini: GeminiConfig | None = None

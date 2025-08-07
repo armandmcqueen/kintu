@@ -1,15 +1,19 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
 from typing import Any, Protocol
-from kintu.types.provider import Provider
-from kintu.types.model import Model
+
+from pydantic import BaseModel, ConfigDict
+
 from kintu.types.message import Message
+from kintu.types.model import Model
+from kintu.types.provider import Provider
 from kintu.types.provider_config import ProviderConfigs
+from kintu.types.tool import Tool
 
 
 class LLMUsage(BaseModel):
-    # Unified token counting
+    # Unified token counting. These are non-overlapping fields. Total tokens is the sum
+    # of all of them.
     input_tokens: int = 0
     input_cached_tokens: int = 0  # Read from cache
     input_cache_write_tokens: int = 0  # Written to cache
@@ -25,31 +29,30 @@ class RequestTiming(BaseModel):
     ttft: float  # Time to first token (any visible content)
     duration: float  # Total request duration
 
+
 # Core API types
 class CompleteInput(BaseModel):
     messages: list[Message]
     model: Model
 
     # Core parameters supported across all providers
-    max_tokens: int = 4096
+    max_tokens: int | None = None  # Will use the max tokens for the model if not provided
+    # Temperature is a value from 0 to 1. It will scale the actual temperature value to match the
+    # model's temperature range
     temperature: float | None = None
 
     # Tools (if supported by provider)
-    tools: list[Any] | None = None  # Can be Tool or provider-specific tools
+    tools: list[Tool] | None = None  # Can be Tool or provider-specific tools
 
     # Provider-specific configs
     provider_configs: ProviderConfigs | None = None
 
     # Streaming
     stream: bool = False
-    stream_callback: Any | None = None  # Will be AsyncStreamCallback
-
-    def validate(self) -> None:
-        """Validate that messages are supported by this provider/model."""
-        # Provider implementations will check message types, roles, etc.
-        pass
+    stream_callback: AsyncStreamCallback | None = None
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
 
 class CompleteReply(BaseModel):
     # Core response
@@ -66,23 +69,22 @@ class CompleteReply(BaseModel):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
+
 # Streaming types
 class StreamChunk(BaseModel):
-    """A streaming chunk with provider data and timing."""
+    """
+    A streaming chunk with provider data and timing.
+
+    kintu does not interpret the provider data at all.
+    """
+
     provider_data: Any
     timestamp: float
     chunk_index: int
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
+
 # Streaming callback
 class AsyncStreamCallback(Protocol):
     async def __call__(self, chunk: StreamChunk) -> None: ...
-
-# Core interface
-class LLMClient(Protocol):
-    """Core interface that all providers implement."""
-
-    async def complete(self, input: CompleteInput) -> CompleteReply:
-        """Asynchronous completion."""
-        ...
