@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 from kintu.types.llmsdk import LLMSDK
@@ -11,6 +9,8 @@ class ModelFeatures(BaseModel):
     vision: bool
     thinking: bool
     tools: bool
+    web_search: bool
+    code_execution: bool
 
 
 class ModelPricing(BaseModel):
