@@ -4,8 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "kintu"
-version = "0.1.0"
-description = "Generic multi-provider LLM library"
+dynamic = ["version", "description"]
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -22,7 +21,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = []
+dependencies = [
+    "pydantic>=2.11.7",
+]
 
 [project.urls]
 Homepage = "https://github.com/armandmcqueen/kintu"
@@ -34,4 +35,22 @@ dev-dependencies = [
     "flit>=3.9.0",
     "invoke>=2.2.0",
     "twine>=6.1.0",
+    "pytest>=8.3.4",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.8.0",
+    "pyright>=1.1.0",
 ]
+
+[tool.uv.sources]
+kintu = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]  # E=errors, F=pyflakes, I=isort
+
+[tool.pyright]
+pythonVersion = "3.10"
+typeCheckingMode = "strict"
