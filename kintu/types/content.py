@@ -33,10 +33,6 @@ class ThinkingContent(Content):
     encrypted_data: Any | None = None
 
 
-class AnthropicRedactedThinkingContent(Content):
-    data: str
-
-
 class ToolCallContent(Content):
     tool_id: str
     tool_name: str
@@ -50,6 +46,9 @@ class ToolResultContent(Content):
     results: list[Content]  # Can contain TextContent, ImageContent, etc.
     is_error: bool = False
 
+
+class AnthropicRedactedThinkingContent(Content):
+    data: str
 
 # Anthropic-specific content types
 class AnthropicServerToolUse(Content):
