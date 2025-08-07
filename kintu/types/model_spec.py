@@ -14,15 +14,10 @@ class ModelFeatures(BaseModel):
 
 
 class ModelPricing(BaseModel):
-    input: float = Field(description="Cost per million input tokens")
     output: float = Field(description="Cost per million output tokens")
-
-    cache_read: Optional[float] = Field(
-        default=None, description="Cost per million cached input tokens"
-    )
-    cache_write: Optional[float] = Field(
-        default=None, description="Cost to write million tokens to cache"
-    )
+    input_nocache: float = Field(description="Cost per million input tokens")
+    input_cache_read: float = Field(description="Cost per million cached input tokens")
+    input_cache_write: float = Field(description="Cost to write million tokens to cache")
 
 
 class ModelSpec(BaseModel):
@@ -39,6 +34,6 @@ class ModelSpec(BaseModel):
 
     context_window: int
     max_output_tokens: int
-    temperature_range: tuple[float, float] = (0.0, 1.0)
+    temperature_range: tuple[float, float]
 
-    release_date: Optional[str] = Field(default=None, description="Model release date")
+    release_date: str = Field(description="Model release date")
