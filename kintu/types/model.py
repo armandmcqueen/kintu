@@ -15,6 +15,9 @@ class Model(str, enum.Enum):
     gemini_2_5_pro = "gemini-2.5-pro"
     gemini_2_5_flash = "gemini-2.5-flash"
     gemini_2_5_flash_lite = "gemini-2.5-flash-lite"
+    gemma_3n_e2b_it = "gemma-3n-e2b-it"
+    gemma_3n_e4b_it = "gemma-3n-e4b-it"
+
 
     # OpenAI models
     gpt_4_1 = "gpt-4.1"
