@@ -3,9 +3,7 @@ from kintu.types.model import Model
 from kintu.types.model_spec import ModelFeatures, ModelPricing, ModelSpec
 from kintu.types.provider import Provider
 
-# Model specifications database
 GEMINI_MODEL_LIBRARY: dict[str, ModelSpec] = {
-    # Gemini Models
     Model.gemini_2_5_pro: ModelSpec(
         model_id=Model.gemini_2_5_pro,
         llmsdk=LLMSDK.GEMINI,
@@ -23,10 +21,10 @@ GEMINI_MODEL_LIBRARY: dict[str, ModelSpec] = {
         pricing=ModelPricing(
             input_nocache=1.25, output=10.0, input_cache_read=0.0, input_cache_write=0.0
         ),
-        context_window=2_000_000,
-        max_output_tokens=8_192,
+        context_window=1_048_576,
+        max_output_tokens=65_535,
         temperature_range=(0.0, 2.0),
-        release_date="2025-04-17",
+        release_date="2025-06-17",
     ),
     Model.gemini_2_5_flash: ModelSpec(
         model_id=Model.gemini_2_5_flash,
@@ -45,10 +43,10 @@ GEMINI_MODEL_LIBRARY: dict[str, ModelSpec] = {
         pricing=ModelPricing(
             input_nocache=0.3, output=2.5, input_cache_read=0.0, input_cache_write=0.0
         ),
-        context_window=1_000_000,
-        max_output_tokens=8_192,
+        context_window=1_048_576,
+        max_output_tokens=65_535,
         temperature_range=(0.0, 2.0),
-        release_date="PLACEHOLDER",
+        release_date="2025-06-17",
     ),
     Model.gemini_2_5_flash_lite: ModelSpec(
         model_id=Model.gemini_2_5_flash_lite,
@@ -67,10 +65,10 @@ GEMINI_MODEL_LIBRARY: dict[str, ModelSpec] = {
         pricing=ModelPricing(
             input_nocache=0.1, output=0.4, input_cache_read=0.0, input_cache_write=0.0
         ),
-        context_window=1_000_000,
-        max_output_tokens=8_192,
+        context_window=1_048_576,
+        max_output_tokens=65_535,
         temperature_range=(0.0, 2.0),
-        release_date="PLACEHOLDER",
+        release_date="2025-06-17",
     ),
     Model.gemma_3n_e2b_it: ModelSpec(  # DONE, NOT TESTED
         model_id=Model.gemma_3n_e2b_it,
@@ -89,7 +87,7 @@ GEMINI_MODEL_LIBRARY: dict[str, ModelSpec] = {
         pricing=ModelPricing(  # These are seemingly free?
             input_nocache=0.0, output=0.0, input_cache_read=0.0, input_cache_write=0.0
         ),
-        context_window=32_000,
+        context_window=32_000,  # Shared between input and output
         max_output_tokens=32_000,
         temperature_range=(0.0, 1.0),  # Gemma is 0.0 to 1.0 based on AI Studio UI
         release_date="2025-06-25",
