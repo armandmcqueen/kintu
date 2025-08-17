@@ -1,0 +1,11 @@
+import base64
+import io
+
+from PIL import Image
+
+
+def image_to_base64_png(image: Image.Image) -> str:
+    """Convert PIL Image to base64 string."""
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+    return base64.b64encode(buffer.getvalue()).decode("utf-8")
