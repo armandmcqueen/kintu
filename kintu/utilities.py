@@ -4,7 +4,7 @@ import io
 from PIL import Image
 
 
-def image_to_base64(image: Image.Image) -> str:
+def image_to_base64_png(image: Image.Image) -> str:
     """Convert PIL Image to base64 string."""
     buffer = io.BytesIO()
     image.save(buffer, format="PNG")
