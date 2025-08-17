@@ -26,7 +26,7 @@ class ImageContent(Content):
 
 class DocumentContent(Content):
     document: bytes
-    openai_filename: str | None = None
+    _openai_filename: str | None = None
 
 
 class ThinkingContent(Content):
