@@ -14,7 +14,7 @@ from kintu.types.tool import Tool
 class LLMUsage(BaseModel):
     # Unified token counting. These are non-overlapping fields. Total tokens is the sum
     # of all of them.
-    input_tokens: int = 0
+    input_uncached_tokens: int = 0
     input_cached_tokens: int = 0  # Read from cache
     input_cache_write_tokens: int = 0  # Written to cache
     completion_tokens: int = 0  # Output tokens (not including reasoning)
@@ -26,7 +26,7 @@ class LLMUsage(BaseModel):
 
 class RequestTiming(BaseModel):
     # All times in seconds
-    ttft: float  # Time to first token (any visible content)
+    ttft: float  # Time to first token. Maybe be a reasoning token.
     duration: float  # Total request duration
 
 
@@ -66,6 +66,7 @@ class CompleteReply(BaseModel):
 
     # Raw provider data (always preserved)
     provider_response: Any | list[Any]  # Single response or list of stream chunks
+    # TODO: Better typing
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 

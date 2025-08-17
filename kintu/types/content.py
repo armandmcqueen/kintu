@@ -6,7 +6,10 @@ from PIL import Image
 from pydantic import BaseModel, ConfigDict
 
 
-# Content types
+# Content is a general holder for entities that go into/out of the LLM. Usually you will send the
+# LLM a series of Messages, each of which will be associated with a single specific Content type.
+# There are some cases where a message may have multiple pieces of Content, specifically tool
+# call results.
 class Content(BaseModel):
     """Base class for all content types."""
 
