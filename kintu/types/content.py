@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from PIL import Image
 from pydantic import BaseModel, ConfigDict
@@ -88,14 +88,30 @@ class AnthropicCodeInterpreterToolResult(Content):
     error_code: str | None = None
 
 
-# OpenAI-specific content types
-class OpenAIServerToolUse(Content):
-    """OpenAI server-side tool use"""
+class OpenAIWebSearchCalled(Content):
+    # This is a server-side message that says "We called the web search tool"
+    # The output is never directly presented to the user, but there is text output from the API call that will leverage the
+    # search results and will include annotations (which kintu doesn't currently support/reveal). In fact, this is an output
+    # message that should probably be dropped before passing it back into the LLM.
+    id: str
+    action_type: Literal["search", "open_page", "find"]
 
-    tool_id: str
-    tool_name: str
-    tool_type: str  # e.g., 'web_search_preview_2025_03_11', 'code_interpreter'
-    input: dict[str, Any] = {}
+    search_query: str | None = None
+    open_page_url: str | None = None
+    find_url: str | None = None
+    find_pattern: str | None = None
+
+
+class OpenAICodeInterpreterOutputElement(BaseModel):
+    type: Literal["logs", "image"]
+    content: str  # logs or image url
+
+class OpenAICodeInterpreterToolResult(Content):
+    """OpenAI code interpreter tool result"""
+    id: str
+    code: str | None = None
+    container_id: str
+    outputs: list[OpenAICodeInterpreterOutputElement] | None = None
 
 
 # Gemini-specific content types
@@ -126,18 +142,19 @@ class GeminiCodeExecutionResult(Content):
 
 
 ContentTypes = (
-    TextContent
-    | ImageContent
-    | DocumentContent
-    | ThinkingContent
-    | ToolCallContent
-    | ToolResultContent
-    | AnthropicRedactedThinkingContent
-    | AnthropicServerToolUse
-    | AnthropicWebSearchToolResult
-    | AnthropicCodeInterpreterToolResult
-    | OpenAIServerToolUse
-    | GeminiServerToolUse
-    | GeminiWebSearchResult
-    | GeminiCodeExecutionResult
+        TextContent
+        | ImageContent
+        | DocumentContent
+        | ThinkingContent
+        | ToolCallContent
+        | ToolResultContent
+        | AnthropicRedactedThinkingContent
+        | AnthropicServerToolUse
+        | AnthropicWebSearchToolResult
+        | AnthropicCodeInterpreterToolResult
+        | OpenAIWebSearchCalled
+        | OpenAICodeInterpreterToolResult
+        | GeminiServerToolUse
+        | GeminiWebSearchResult
+        | GeminiCodeExecutionResult
 )
