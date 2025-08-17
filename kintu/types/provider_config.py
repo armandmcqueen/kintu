@@ -21,9 +21,8 @@ class AnthropicConfig(BaseModel):
     top_k: int | None = None
 
     tool_choice: AnthropicToolChoice | None = None
-    tool_choice_specific_name: str | None = (
-        None  # If tool_choice is TOOL, you must provide the name of the tool
-    )
+    # If tool_choice is TOOL, you must provide the name of the tool
+    tool_choice_specific_name: str | None = None
 
     # Thinking configuration
     thinking_enabled: bool | None = None
@@ -56,9 +55,8 @@ class OpenAIConfig(BaseModel):
     top_p: float | None = None
 
     tool_choice: OpenAIToolChoice | None = None
-    tool_choice_specific_name: str | None = (
-        None  # If tool_choice is SPECIFIC, you must provide the name of the tool
-    )
+    tool_choice_specific_name: str | None = None
+    # If tool_choice is SPECIFIC, you must provide the name of the tool
 
     # Reasoning configuration
     reasoning_effort: OpenAIReasoningLevel | None = None
