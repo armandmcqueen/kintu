@@ -15,7 +15,7 @@ class ModelFeatures(BaseModel):
 
 class ModelPricing(BaseModel):
     output: float = Field(description="Cost per million output tokens")
-    input_nocache: float = Field(description="Cost per million input tokens")
+    input_nocache: float = Field(description="Cost per million input tokens that are neither written to cache or read from cache")
     input_cache_read: float = Field(description="Cost per million cached input tokens")
     input_cache_write: float = Field(description="Cost to write million tokens to cache")
 
